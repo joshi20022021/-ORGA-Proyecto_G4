@@ -17,3 +17,5 @@ kw_PRINT_STAR = r"set_print_estrella"
 
 kw_NEW_JOB = r"new_print"
 kw_END_JOB = r"end_print"
+
+t_ignore = " \t\n"
