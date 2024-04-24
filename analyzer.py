@@ -1,21 +1,36 @@
-#!/usr/bin/env python3
+from parser import parser
 
-import ply.lex as lex
-import ply.yacc as yacc
+import logging
+
+data = """
+# esto es un comentario
+
+new_print PrimeraImpresion;
 
 
-tokens = {"NUMBER", "COLOR", "FUNCTION", "COMMENT"}
+# set_print_x(fila, columna, color);
+# set_print_o(fila, columna, color);
+# set_print_triangulo(fila, columna, color);
+# set_print_estrella(fila, columna, color);
 
-t_NUMBER = r"\d+"
-t_COLOR = r"cyan|magenta|amarillo|negro"
-t_TEXT = r"[a-zA-Z_][a-zA-Z0-9_]*"
+# coordenadas para el jugador x
+set_print_x(1, 1, cyan);
+set_print_x(2, 1, negro);
+set_print_x(2, 2, cyan);
+set_print_x(3, 2, amarillo);
+set_print_x(3, 3, magenta);
 
-kw_PRINT_X = r"set_print_x"
-kw_PRINT_O = r"set_print_o"
-kw_PRINT_TRIANGLE = r"set_print_triangulo"
-kw_PRINT_STAR = r"set_print_estrella"
 
-kw_NEW_JOB = r"new_print"
-kw_END_JOB = r"end_print"
+# coordanadas para el jugador o
+set_print_o(3, 1, magenta);
+set_print_o(1, 2, cyan);
+set_print_o(1, 3, amarillo);
+set_print_o(2, 3, negro);
 
-t_ignore = " \t\n"
+end_print;
+
+"""
+
+
+data = parser.parse(data)
+print(data)
