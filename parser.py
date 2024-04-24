@@ -59,14 +59,4 @@ def p_error(p):
     print("Syntax error in input!")
 
 
-import logging
-
-logging.basicConfig(
-    level=logging.INFO,
-    filename="parselog.txt",
-    filemode="w",
-    format="%(filename)10s:%(lineno)4d:%(message)s",
-)
-log = logging.getLogger()
-
-parser = yacc.yacc(debuglog=log)
+parser = yacc.yacc()
