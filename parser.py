@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import ply.yacc as yacc
-from lexer import tokens
+from lexer import *
 
 """
     @author: sebas-v-c
@@ -12,18 +12,25 @@ def p_star(p):
     """
     start   : prints
     """
-    pass
+    p[0] = p[1]
 
 
 def p_prints(p):
     """
-    prints  : prints NEW_PRINT ID ';' statements END_PRINT ';'
-            | NEW_PRINT ID ';' statements END_PRINT ';'
+    prints  : prints print
+            | print
     """
-    if len(p) == 7:
-        p[0] = [{p[2]: p[4]}]
+    if len(p) == 2:
+        p[0] = [p[1]]
     else:
-        p[0] = p[1] + [{p[3]: p[5]}]
+        p[0] = p[1] + [p[2]]
+
+
+def p_print(p):
+    """
+    print   : NEW_PRINT ID ';' statements END_PRINT ';'
+    """
+    p[0] = {"name": p[2], "instructions": p[4]}
 
 
 def p_statements_sequence(p):

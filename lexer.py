@@ -63,14 +63,4 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-# EOF handling rule
-def t_eof(t):
-    # Get more input (Example)
-    more = input("... ")
-    if more:
-        lexer.input(more)
-        return lexer.token()
-    return None
-
-
 lexer = lex.lex()
