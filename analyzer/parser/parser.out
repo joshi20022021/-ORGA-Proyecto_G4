@@ -1,0 +1,425 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COMMENT
+
+Grammar
+
+Rule 0     S' -> start
+Rule 1     start -> prints
+Rule 2     prints -> prints print
+Rule 3     prints -> print
+Rule 4     print -> NEW_PRINT ID ; statements END_PRINT ;
+Rule 5     statements -> statements statement ;
+Rule 6     statements -> statement ;
+Rule 7     statement -> <empty>
+Rule 8     statement -> PRINT_X ( NUMBER , NUMBER , COLOR )
+Rule 9     statement -> PRINT_O ( NUMBER , NUMBER , COLOR )
+Rule 10    statement -> PRINT_TRI ( NUMBER , NUMBER , COLOR )
+Rule 11    statement -> PRINT_STAR ( NUMBER , NUMBER , COLOR )
+
+Terminals, with rules where they appear
+
+(                    : 8 9 10 11
+)                    : 8 9 10 11
+,                    : 8 8 9 9 10 10 11 11
+;                    : 4 4 5 6
+COLOR                : 8 9 10 11
+COMMENT              : 
+END_PRINT            : 4
+ID                   : 4
+NEW_PRINT            : 4
+NUMBER               : 8 8 9 9 10 10 11 11
+PRINT_O              : 9
+PRINT_STAR           : 11
+PRINT_TRI            : 10
+PRINT_X              : 8
+error                : 
+
+Nonterminals, with rules where they appear
+
+print                : 2 3
+prints               : 1 2
+start                : 0
+statement            : 5 6
+statements           : 4 5
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . start
+    (1) start -> . prints
+    (2) prints -> . prints print
+    (3) prints -> . print
+    (4) print -> . NEW_PRINT ID ; statements END_PRINT ;
+
+    NEW_PRINT       shift and go to state 4
+
+    start                          shift and go to state 1
+    prints                         shift and go to state 2
+    print                          shift and go to state 3
+
+state 1
+
+    (0) S' -> start .
+
+
+
+state 2
+
+    (1) start -> prints .
+    (2) prints -> prints . print
+    (4) print -> . NEW_PRINT ID ; statements END_PRINT ;
+
+    $end            reduce using rule 1 (start -> prints .)
+    NEW_PRINT       shift and go to state 4
+
+    print                          shift and go to state 5
+
+state 3
+
+    (3) prints -> print .
+
+    NEW_PRINT       reduce using rule 3 (prints -> print .)
+    $end            reduce using rule 3 (prints -> print .)
+
+
+state 4
+
+    (4) print -> NEW_PRINT . ID ; statements END_PRINT ;
+
+    ID              shift and go to state 6
+
+
+state 5
+
+    (2) prints -> prints print .
+
+    NEW_PRINT       reduce using rule 2 (prints -> prints print .)
+    $end            reduce using rule 2 (prints -> prints print .)
+
+
+state 6
+
+    (4) print -> NEW_PRINT ID . ; statements END_PRINT ;
+
+    ;               shift and go to state 7
+
+
+state 7
+
+    (4) print -> NEW_PRINT ID ; . statements END_PRINT ;
+    (5) statements -> . statements statement ;
+    (6) statements -> . statement ;
+    (7) statement -> .
+    (8) statement -> . PRINT_X ( NUMBER , NUMBER , COLOR )
+    (9) statement -> . PRINT_O ( NUMBER , NUMBER , COLOR )
+    (10) statement -> . PRINT_TRI ( NUMBER , NUMBER , COLOR )
+    (11) statement -> . PRINT_STAR ( NUMBER , NUMBER , COLOR )
+
+    ;               reduce using rule 7 (statement -> .)
+    PRINT_X         shift and go to state 10
+    PRINT_O         shift and go to state 11
+    PRINT_TRI       shift and go to state 12
+    PRINT_STAR      shift and go to state 13
+
+    statements                     shift and go to state 8
+    statement                      shift and go to state 9
+
+state 8
+
+    (4) print -> NEW_PRINT ID ; statements . END_PRINT ;
+    (5) statements -> statements . statement ;
+    (7) statement -> .
+    (8) statement -> . PRINT_X ( NUMBER , NUMBER , COLOR )
+    (9) statement -> . PRINT_O ( NUMBER , NUMBER , COLOR )
+    (10) statement -> . PRINT_TRI ( NUMBER , NUMBER , COLOR )
+    (11) statement -> . PRINT_STAR ( NUMBER , NUMBER , COLOR )
+
+    END_PRINT       shift and go to state 14
+    ;               reduce using rule 7 (statement -> .)
+    PRINT_X         shift and go to state 10
+    PRINT_O         shift and go to state 11
+    PRINT_TRI       shift and go to state 12
+    PRINT_STAR      shift and go to state 13
+
+    statement                      shift and go to state 15
+
+state 9
+
+    (6) statements -> statement . ;
+
+    ;               shift and go to state 16
+
+
+state 10
+
+    (8) statement -> PRINT_X . ( NUMBER , NUMBER , COLOR )
+
+    (               shift and go to state 17
+
+
+state 11
+
+    (9) statement -> PRINT_O . ( NUMBER , NUMBER , COLOR )
+
+    (               shift and go to state 18
+
+
+state 12
+
+    (10) statement -> PRINT_TRI . ( NUMBER , NUMBER , COLOR )
+
+    (               shift and go to state 19
+
+
+state 13
+
+    (11) statement -> PRINT_STAR . ( NUMBER , NUMBER , COLOR )
+
+    (               shift and go to state 20
+
+
+state 14
+
+    (4) print -> NEW_PRINT ID ; statements END_PRINT . ;
+
+    ;               shift and go to state 21
+
+
+state 15
+
+    (5) statements -> statements statement . ;
+
+    ;               shift and go to state 22
+
+
+state 16
+
+    (6) statements -> statement ; .
+
+    END_PRINT       reduce using rule 6 (statements -> statement ; .)
+    PRINT_X         reduce using rule 6 (statements -> statement ; .)
+    PRINT_O         reduce using rule 6 (statements -> statement ; .)
+    PRINT_TRI       reduce using rule 6 (statements -> statement ; .)
+    PRINT_STAR      reduce using rule 6 (statements -> statement ; .)
+    ;               reduce using rule 6 (statements -> statement ; .)
+
+
+state 17
+
+    (8) statement -> PRINT_X ( . NUMBER , NUMBER , COLOR )
+
+    NUMBER          shift and go to state 23
+
+
+state 18
+
+    (9) statement -> PRINT_O ( . NUMBER , NUMBER , COLOR )
+
+    NUMBER          shift and go to state 24
+
+
+state 19
+
+    (10) statement -> PRINT_TRI ( . NUMBER , NUMBER , COLOR )
+
+    NUMBER          shift and go to state 25
+
+
+state 20
+
+    (11) statement -> PRINT_STAR ( . NUMBER , NUMBER , COLOR )
+
+    NUMBER          shift and go to state 26
+
+
+state 21
+
+    (4) print -> NEW_PRINT ID ; statements END_PRINT ; .
+
+    NEW_PRINT       reduce using rule 4 (print -> NEW_PRINT ID ; statements END_PRINT ; .)
+    $end            reduce using rule 4 (print -> NEW_PRINT ID ; statements END_PRINT ; .)
+
+
+state 22
+
+    (5) statements -> statements statement ; .
+
+    END_PRINT       reduce using rule 5 (statements -> statements statement ; .)
+    PRINT_X         reduce using rule 5 (statements -> statements statement ; .)
+    PRINT_O         reduce using rule 5 (statements -> statements statement ; .)
+    PRINT_TRI       reduce using rule 5 (statements -> statements statement ; .)
+    PRINT_STAR      reduce using rule 5 (statements -> statements statement ; .)
+    ;               reduce using rule 5 (statements -> statements statement ; .)
+
+
+state 23
+
+    (8) statement -> PRINT_X ( NUMBER . , NUMBER , COLOR )
+
+    ,               shift and go to state 27
+
+
+state 24
+
+    (9) statement -> PRINT_O ( NUMBER . , NUMBER , COLOR )
+
+    ,               shift and go to state 28
+
+
+state 25
+
+    (10) statement -> PRINT_TRI ( NUMBER . , NUMBER , COLOR )
+
+    ,               shift and go to state 29
+
+
+state 26
+
+    (11) statement -> PRINT_STAR ( NUMBER . , NUMBER , COLOR )
+
+    ,               shift and go to state 30
+
+
+state 27
+
+    (8) statement -> PRINT_X ( NUMBER , . NUMBER , COLOR )
+
+    NUMBER          shift and go to state 31
+
+
+state 28
+
+    (9) statement -> PRINT_O ( NUMBER , . NUMBER , COLOR )
+
+    NUMBER          shift and go to state 32
+
+
+state 29
+
+    (10) statement -> PRINT_TRI ( NUMBER , . NUMBER , COLOR )
+
+    NUMBER          shift and go to state 33
+
+
+state 30
+
+    (11) statement -> PRINT_STAR ( NUMBER , . NUMBER , COLOR )
+
+    NUMBER          shift and go to state 34
+
+
+state 31
+
+    (8) statement -> PRINT_X ( NUMBER , NUMBER . , COLOR )
+
+    ,               shift and go to state 35
+
+
+state 32
+
+    (9) statement -> PRINT_O ( NUMBER , NUMBER . , COLOR )
+
+    ,               shift and go to state 36
+
+
+state 33
+
+    (10) statement -> PRINT_TRI ( NUMBER , NUMBER . , COLOR )
+
+    ,               shift and go to state 37
+
+
+state 34
+
+    (11) statement -> PRINT_STAR ( NUMBER , NUMBER . , COLOR )
+
+    ,               shift and go to state 38
+
+
+state 35
+
+    (8) statement -> PRINT_X ( NUMBER , NUMBER , . COLOR )
+
+    COLOR           shift and go to state 39
+
+
+state 36
+
+    (9) statement -> PRINT_O ( NUMBER , NUMBER , . COLOR )
+
+    COLOR           shift and go to state 40
+
+
+state 37
+
+    (10) statement -> PRINT_TRI ( NUMBER , NUMBER , . COLOR )
+
+    COLOR           shift and go to state 41
+
+
+state 38
+
+    (11) statement -> PRINT_STAR ( NUMBER , NUMBER , . COLOR )
+
+    COLOR           shift and go to state 42
+
+
+state 39
+
+    (8) statement -> PRINT_X ( NUMBER , NUMBER , COLOR . )
+
+    )               shift and go to state 43
+
+
+state 40
+
+    (9) statement -> PRINT_O ( NUMBER , NUMBER , COLOR . )
+
+    )               shift and go to state 44
+
+
+state 41
+
+    (10) statement -> PRINT_TRI ( NUMBER , NUMBER , COLOR . )
+
+    )               shift and go to state 45
+
+
+state 42
+
+    (11) statement -> PRINT_STAR ( NUMBER , NUMBER , COLOR . )
+
+    )               shift and go to state 46
+
+
+state 43
+
+    (8) statement -> PRINT_X ( NUMBER , NUMBER , COLOR ) .
+
+    ;               reduce using rule 8 (statement -> PRINT_X ( NUMBER , NUMBER , COLOR ) .)
+
+
+state 44
+
+    (9) statement -> PRINT_O ( NUMBER , NUMBER , COLOR ) .
+
+    ;               reduce using rule 9 (statement -> PRINT_O ( NUMBER , NUMBER , COLOR ) .)
+
+
+state 45
+
+    (10) statement -> PRINT_TRI ( NUMBER , NUMBER , COLOR ) .
+
+    ;               reduce using rule 10 (statement -> PRINT_TRI ( NUMBER , NUMBER , COLOR ) .)
+
+
+state 46
+
+    (11) statement -> PRINT_STAR ( NUMBER , NUMBER , COLOR ) .
+
+    ;               reduce using rule 11 (statement -> PRINT_STAR ( NUMBER , NUMBER , COLOR ) .)
+
