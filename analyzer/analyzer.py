@@ -1,7 +1,8 @@
-from parser import parser
-from typing import List, Dict
+from .parser.parser import parser
+from typing import List
 
-from printjob import PrintJob
+from .printjob import PrintJob
+
 
 """
     @author: sebas-v-c
@@ -18,6 +19,8 @@ def analyze_file(file_path: str) -> List[PrintJob]:
         List[PrintJob]: returns a list of the declared print jobs in the input file
 
     """
+    data: List[PrintJob] = []
     with open(file_path, "r") as file:
         input_text = file.read()
-        return parser.parse(input_text)
+        data = parser.parse(input_text)
+    return data

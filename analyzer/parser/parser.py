@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import ply.yacc as yacc
-from lexer import *
+from .lexer import *
 
-from printjob import PrintJob, Instruction
+from ..printjob import PrintJob, Instruction
 
 """
     @author: sebas-v-c
