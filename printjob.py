@@ -20,6 +20,6 @@ class PrintJob:
     def __str__(self):
         inst_data = ""
         for inst in self.instructions:
-            inst_data = str(inst) + "\n"
+            inst_data += "\t\t" + str(inst) + ",\n"
 
-        return f"Name: {self.name}\nInstructions:\n{inst_data}"
+        return f"PrintJob(\n\tname={self.name},\n\tinstructions=[\n{inst_data}\t]\n)"
