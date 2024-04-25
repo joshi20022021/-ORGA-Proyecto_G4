@@ -7,7 +7,9 @@ class AplicacionPixelArt:
     def __init__(self, raiz):
         self.raiz = raiz
         self.raiz.title("Aplicación de Pixel Art")
+        self.imagen_id = None 
         self.raiz.bind("<Configure>", self.actualizar_tamanio)
+        self.imagenes_en_lienzo = []
 
         # Estilos
         self.estilo = {
@@ -57,7 +59,7 @@ class AplicacionPixelArt:
             "boton_triangulo": {
                 "background": "#FF00FF",  # Color magenta
                 "activebackground": "#CC00CC"  # Color magenta oscuro al presionar
-            },
+            }
         }
 
         # Contenedor principal
@@ -92,27 +94,14 @@ class AplicacionPixelArt:
         self.boton_negro = tk.Button(self.barra_lateral, text="Negro", command=lambda: self.seleccionar_color('#000000'), **{**self.estilo["boton"], **self.estilo["boton_negro"]})
         self.boton_negro.grid(row=7, column=0, padx=5, pady=5, sticky="ew")
 
-        # Botón para abrir archivo
-        self.boton_abrir_archivo = tk.Button(self.barra_lateral, text="Abrir archivo", command=self.abrir_archivo, **{**self.estilo["boton"], **self.estilo["boton_cyan"]})
-        self.boton_abrir_archivo.grid(row=8, column=0, padx=5, pady=5, sticky="ew")
-
         # Lienzo de Pixel Art
         self.lienzo = tk.Canvas(self.contenedor, bg=self.estilo["lienzo"]["background"], width=500, height=500, highlightthickness=0)
         self.lienzo.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
-        self.lienzo.bind("<Button-1>", self.comenzar_arrastre)
-        self.lienzo.bind("<B1-Motion>", self.actualizar_posicion)
-        self.lienzo.bind("<ButtonRelease-1>", self.soltar_imagen)
 
         # Imagen y estado de juego
         self.imagen = Image.new("RGB", (3, 3), "white")
         self.dibujo = ImageDraw.Draw(self.imagen)
         self.jugador_actual = 'X'
-
-        # Variables para el arrastre de la imagen
-        self.simbolo_seleccionado = None
-        self.color_seleccionado = '#000000'  # Por defecto, negro
-        self.imagen_seleccionada = None
-        self.posicion_inicial = None
 
         # Dibujar el tablero tipo "totito"
         self.dibujar_tablero()
@@ -124,45 +113,86 @@ class AplicacionPixelArt:
         self.lienzo.config(width=self.raiz.winfo_width() * 0.75, height=self.raiz.winfo_height() * 0.75)
 
     def seleccionar_simbolo(self, simbolo):
+        print("Seleccionar símbolo:", simbolo)
         self.simbolo_seleccionado = simbolo
-        self.cargar_imagen_simbolo()
 
-    def cargar_imagen_simbolo(self):
-        # Aquí deberías cargar imágenes de acuerdo al símbolo seleccionado
-        # Se usa un ejemplo simple para representar el proceso
+        # Solicitar coordenadas al usuario
+        self.solicitar_coordenadas()
+
+    def solicitar_coordenadas(self):
+        # Crear una ventana secundaria para ingresar coordenadas
+        self.ventana_coordenadas = tk.Toplevel(self.raiz)
+        self.ventana_coordenadas.title("Ingresar Coordenadas")
+
+        # Etiquetas y campos de entrada para las coordenadas
+        tk.Label(self.ventana_coordenadas, text="Fila:").grid(row=0, column=0, padx=5, pady=5)
+        self.entry_fila = tk.Entry(self.ventana_coordenadas)
+        self.entry_fila.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(self.ventana_coordenadas, text="Columna:").grid(row=1, column=0, padx=5, pady=5)
+        self.entry_columna = tk.Entry(self.ventana_coordenadas)
+        self.entry_columna.grid(row=1, column=1, padx=5, pady=5)
+
+        # Botón para aceptar coordenadas
+        tk.Button(self.ventana_coordenadas, text="Aceptar", command=self.colocar_figura).grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+    def colocar_figura(self):
+        fila = int(self.entry_fila.get())
+        columna = int(self.entry_columna.get())
+        
+        # Calculate the coordinates in the canvas based on the row and column
+        x = (columna - 1) * 500 // 3 + 500 // 6 
+        y = (fila - 1) * 500 // 3 + 500 // 6
+        
+        # Draw the figure on the board
+        self.dibujar_figura(x, y)
+        
+        # Close the coordinates window
+        self.ventana_coordenadas.destroy()
+
+    def dibujar_figura(self, x, y):
+        # Crear una nueva imagen con fondo blanco
+        imagen_nueva = Image.new('RGB', (50, 50), "white")
+        draw = ImageDraw.Draw(imagen_nueva)
+
+        # Dibujar el símbolo en la imagen
         if self.simbolo_seleccionado == 'X':
-            self.imagen_seleccionada = Image.new('RGB', (50, 50), self.color_seleccionado)
+            color = self.obtener_color_hexadecimal()
+            draw.line((0, 0, 50, 50), fill=color, width=5)
+            draw.line((0, 50, 50, 0), fill=color, width=5)
         elif self.simbolo_seleccionado == 'O':
-            self.imagen_seleccionada = Image.new('RGB', (50, 50), self.color_seleccionado)
+            color = self.obtener_color_hexadecimal()
+            draw.ellipse((5, 5, 45, 45), outline=color, width=5)
         elif self.simbolo_seleccionado == '*':
-            self.imagen_seleccionada = Image.new('RGB', (50, 50), self.color_seleccionado)
+            color = self.obtener_color_hexadecimal()
+            draw.polygon([(25, 5), (45, 45), (5, 25), (45, 25), (5, 45)], outline=color, width=5)
         elif self.simbolo_seleccionado == '^':
-            self.imagen_seleccionada = Image.new('RGB', (50, 50), self.color_seleccionado)
-        self.animacion_colocar_figura()
+            color = self.obtener_color_hexadecimal()
+            draw.polygon([(5, 45), (25, 5), (45, 45)], outline=color, width=5)
 
-    def animacion_colocar_figura(self):
-        if self.imagen_seleccionada:
-            self.lienzo.image = ImageTk.PhotoImage(self.imagen_seleccionada)
-            self.lienzo.create_image(250, 250, image=self.lienzo.image)  # Posición fija como ejemplo
+        # Convertir la imagen a un objeto PhotoImage de Tkinter
+        imagen_seleccionada = ImageTk.PhotoImage(imagen_nueva)
+
+        # Crear una nueva imagen en el lienzo con la imagen seleccionada
+        imagen_id = self.lienzo.create_image(x, y, image=imagen_seleccionada)
+        self.imagenes_en_lienzo.append(imagen_id)  # Agregar el identificador de la imagen al registro
+
+    def obtener_color_hexadecimal(self):
+        if self.simbolo_seleccionado == 'X':
+            return "#FF0000"  # Color rojo
+        elif self.simbolo_seleccionado == 'O':
+            return "#00FF00"  # Color verde
+        elif self.simbolo_seleccionado == '*':
+            return "#0000FF"  # Color azul
+        elif self.simbolo_seleccionado == '^':
+            return "#FF00FF"  # Color magenta
 
     def seleccionar_color(self, color):
+        print("Seleccionar color:", color)
         self.color_seleccionado = color
-        if self.simbolo_seleccionado:
-            self.cargar_imagen_simbolo()
 
-    def comenzar_arrastre(self, event):
-        self.posicion_inicial = (event.x, event.y)
-
-    def actualizar_posicion(self, event):
-        if self.imagen_seleccionada:
-            x = event.x - self.posicion_inicial[0] + 250  # 250 es una posición base fija
-            y = event.y - self.posicion_inicial[1] + 250
-            self.lienzo.delete("all")
-            self.lienzo.create_image(x, y, image=self.lienzo.image)
-
-    def soltar_imagen(self, event):
-        # Aquí se puede implementar la lógica para fijar la imagen en el lienzo
-        pass
+        # Solicitar coordenadas al usuario
+        self.solicitar_coordenadas()
 
     def dibujar_tablero(self):
         cell_size = 500 // 3  # Calcula el tamaño de cada celda
@@ -171,13 +201,6 @@ class AplicacionPixelArt:
             self.lienzo.create_line(cell_size * i, 0, cell_size * i, 500, width=2)
             # Dibujar líneas horizontales
             self.lienzo.create_line(0, cell_size * i, 500, cell_size * i, width=2)
-
-    def abrir_archivo(self):
-        ruta_archivo = filedialog.askopenfilename(initialdir=os.getcwd(), title="Seleccionar archivo de imagen", filetypes=[("Archivos de imagen", "*.png;*.jpg;*.jpeg")])
-        if ruta_archivo:
-            imagen = Image.open(ruta_archivo)
-            self.imagen_seleccionada = ImageTk.PhotoImage(imagen)
-            self.animacion_colocar_figura()
 
 raiz = tk.Tk()
 app = AplicacionPixelArt(raiz)
