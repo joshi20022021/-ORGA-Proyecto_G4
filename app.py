@@ -9,7 +9,7 @@ class AnalizadorLexico:
 
     tokens = (
         'COMMENT',
-        'NEW_PRINT',
+        'NEW_PRINT',    
         'SET_PRINT',
         'COORDINATES',
         'COLOR'
@@ -57,31 +57,99 @@ class TotitoApp:
         # Matriz para representar el tablero 3x3
         self.tablero = [[' ' for _ in range(3)] for _ in range(3)]
         
-        # Estilo para los botones de las figuras
-        self.figura_btn_style = {"bg": "#d9d9d9", "activebackground": "#bfbfbf", "pady": 5}
+        # Estilos para los botones de las figuras
+        figura_btn_style = {
+            "bg": "#d9d9d9",
+            "activebackground": "#bfbfbf",
+            "fg": "black",  # Color del texto
+            "font": ("Arial", 14),  # Fuente y tamaño del texto
+            "pady": 5,  # Padding vertical
+            "padx": 10,  # Padding horizontal
+        }
 
-        # Botones para elegir las figuras
-        self.botones_figuras = []
-        self.figuras = {"X": "✕", "O": "◯", "Estrella": "☆", "Triangulo": "△"}
-        for figura, caracter in self.figuras.items():
-            btn = tk.Button(root, text=caracter, command=lambda f=figura: self.elegir_figura(f), **self.figura_btn_style)
-            btn.pack(side=tk.LEFT, padx=5, pady=5)
-            self.botones_figuras.append(btn)
-        
         # Canvas para dibujar el tablero
         self.canvas = tk.Canvas(root, width=300, height=300, bg="white")
         self.canvas.pack()
         self.dibujar_tablero()
 
+        # Botones para elegir las figuras
+        self.botones_figuras = []
+        self.figuras = {"X": "✕", "O": "◯", "Estrella": "☆", "Triangulo": "△"}
+        for figura, caracter in self.figuras.items():
+            btn = tk.Button(root, text=caracter, command=lambda f=figura: self.elegir_figura(f), **figura_btn_style)
+            btn.pack(side=tk.LEFT, padx=5, pady=5)
+            self.botones_figuras.append(btn)
+
         # Botón para cargar desde archivo
         btn_cargar = tk.Button(root, text="Cargar desde archivo", command=self.cargar_desde_archivo, padx=10, pady=5, bg="#007bff", fg="white", activebackground="#0056b3")
         btn_cargar.pack(pady=10)
 
+        # Crear el área de texto
+        self.text_frame = tk.Frame(root)
+        self.text_frame.pack(pady=10)
+        self.text_area = tk.Text(self.text_frame, width=30, height=10)
+        self.text_area.pack()
+
+        # Crear la barra de menú
+        self.crear_menu()
+    
+    def nuevo_archivo(self):
+        # Eliminar todas las figuras del tablero
+        items = self.canvas.find_all()
+        for item in items:
+            tags = self.canvas.gettags(item)
+            if "figura" in tags:
+                self.canvas.delete(item)
+        # Reiniciar la matriz del tablero
+        self.tablero = [[' ' for _ in range(3)] for _ in range(3)]
+        # Limpiar el área de texto
+        self.text_area.delete(1.0, tk.END)
+
+    def guardar_como(self):
+        # Aquí puedes implementar la funcionalidad para guardar como archivo
+        pass
+
+    def guardar(self):
+        # Aquí puedes implementar la funcionalidad para guardar archivo
+        pass
+
+    def imprimir(self):
+        # Aquí puedes implementar la funcionalidad para imprimir
+        pass
+
+    def salir(self):
+        self.root.quit()
+
+    def acerca_de(self):
+        # Aquí puedes mostrar información sobre la aplicación
+        pass
+
+    def crear_menu(self):
+        # Crear la barra de menú
+        menu_bar = tk.Menu(self.root)
+        self.root.config(menu=menu_bar)
+
+        # Menú Archivo
+        archivo_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Archivo", menu=archivo_menu)
+        archivo_menu.add_command(label="Abrir archivo", command=self.cargar_desde_archivo)
+        archivo_menu.add_command(label="Nuevo archivo", command=self.nuevo_archivo)
+        archivo_menu.add_command(label="Guardar como", command=self.guardar_como)
+        archivo_menu.add_command(label="Guardar", command=self.guardar)
+        archivo_menu.add_command(label="Imprimir", command=self.imprimir)
+        archivo_menu.add_separator()
+        archivo_menu.add_command(label="Salir", command=self.salir)
+
+        # Menú Ayuda
+        ayuda_menu = tk.Menu(menu_bar, tearoff=0)
+        menu_bar.add_cascade(label="Ayuda", menu=ayuda_menu)
+        ayuda_menu.add_command(label="Acerca de...", command=self.acerca_de)
+
     def dibujar_tablero(self):
         # Dibuja las líneas del tablero
         for i in range(1, 3):
-            self.canvas.create_line(100 * i, 0, 100 * i, 300)
-            self.canvas.create_line(0, 100 * i, 300, 100 * i)
+            self.canvas.create_line(100 * i, 0, 100 * i, 300)  # Líneas verticales
+            self.canvas.create_line(0, 100 * i, 300, 100 * i)  # Líneas horizontales
 
     def elegir_figura(self, figura):
         if figura in ["X", "O"]:
@@ -96,22 +164,29 @@ class TotitoApp:
         ventana.title("Ingrese fila y columna")
         ventana.configure(background="#f0f0f0")
         
-        tk.Label(ventana, text="Fila (1-3):", bg="#f0f0f0").grid(row=0, column=0, padx=5, pady=5)
-        tk.Label(ventana, text="Columna (1-3):", bg="#f0f0f0").grid(row=1, column=0, padx=5, pady=5)
-        tk.Label(ventana, text="Color:", bg="#f0f0f0").grid(row=2, column=0, padx=5, pady=5)
+        # Estilos de texto
+        label_style = {"bg": "#f0f0f0", "fg": "black", "font": ("Arial", 12)}
 
-        entry_fila = tk.Entry(ventana)
+        tk.Label(ventana, text="Fila (1-3):", **label_style).grid(row=0, column=0, padx=5, pady=5)
+        tk.Label(ventana, text="Columna (1-3):", **label_style).grid(row=1, column=0, padx=5, pady=5)
+        tk.Label(ventana, text="Color:", **label_style).grid(row=2, column=0, padx=5, pady=5)
+
+        entry_style = {"bg": "white", "fg": "black", "font": ("Arial", 12)}
+        entry_fila = tk.Entry(ventana, **entry_style)
         entry_fila.grid(row=0, column=1, padx=5, pady=5)
-        entry_columna = tk.Entry(ventana)
+        entry_columna = tk.Entry(ventana, **entry_style)
         entry_columna.grid(row=1, column=1, padx=5, pady=5)
 
+        dropdown_style = {"bg": "#f0f0f0", "fg": "black", "font": ("Arial", 12)}
         colores = ["cyan", "magenta", "amarillo", "negro"]
         color_variable = tk.StringVar(ventana)
         color_variable.set(colores[0])
         dropdown_color = tk.OptionMenu(ventana, color_variable, *colores)
+        dropdown_color.config(**dropdown_style)
         dropdown_color.grid(row=2, column=1, padx=5, pady=5)
 
-        btn_confirmar = tk.Button(ventana, text="Confirmar", command=lambda: self.dibujar_figura(figura, entry_fila.get(), entry_columna.get(), color_variable.get()), bg="#007bff", fg="white", activebackground="#0056b3")
+        button_style = {"bg": "#007bff", "fg": "white", "font": ("Arial", 12), "activebackground": "#0056b3"}
+        btn_confirmar = tk.Button(ventana, text="Confirmar", command=lambda: self.dibujar_figura(figura, entry_fila.get(), entry_columna.get(), color_variable.get()), **button_style)
         btn_confirmar.grid(row=3, columnspan=2, padx=5, pady=5)
 
     def dibujar_figura(self, figura, fila, columna, color):
@@ -134,25 +209,30 @@ class TotitoApp:
                 color = "yellow"
             
             if figura == "X":
-                self.canvas.create_line(x-40, y-40, x+40, y+40, fill=color, width=2)
-                self.canvas.create_line(x-40, y+40, x+40, y-40, fill=color, width=2)
+                line1 = self.canvas.create_line(x-40, y-40, x+40, y+40, fill=color, width=2)
+                line2 = self.canvas.create_line(x-40, y+40, x+40, y-40, fill=color, width=2)
+                # Agregar etiqueta "figura" a las líneas
+                self.canvas.addtag_withtag("figura", line1)
+                self.canvas.addtag_withtag("figura", line2)
             elif figura == "O":
-                self.canvas.create_oval(x-40, y-40, x+40, y+40, outline=color, width=2)
+                oval = self.canvas.create_oval(x-40, y-40, x+40, y+40, outline=color, width=2)
+                # Agregar etiqueta "figura" al óvalo
+                self.canvas.addtag_withtag("figura", oval)
             elif figura == "ESTRELLA":
                 puntos = [x, y-50, x-20, y-20, x-50, y, x-20, y+20, x, y+50, x+20, y+20, x+50, y, x+20, y-20]
-                self.canvas.create_polygon(puntos, fill=color, outline=color)
+                polygon = self.canvas.create_polygon(puntos, fill=color, outline=color)
+                # Agregar etiqueta "figura" al polígono
+                self.canvas.addtag_withtag("figura", polygon)
             elif figura == "TRIANGULO":
                 puntos = [x, y-50, x-50, y+50, x+50, y+50]
-                self.canvas.create_polygon(puntos, fill=color, outline=color)
+                polygon = self.canvas.create_polygon(puntos, fill=color, outline=color)
+                # Agregar etiqueta "figura" al polígono
+                self.canvas.addtag_withtag("figura", polygon)
             
             # Actualizar la matriz del tablero
             self.tablero[fila-1][columna-1] = figura
         except ValueError:
             messagebox.showerror("Error", "Ingrese valores numéricos para fila y columna.")
-
-
-
-
 
     def colocar_figura(self, figura, fila, columna, color):
         # Coloca la figura en el tablero en las coordenadas especificadas
@@ -179,6 +259,8 @@ class TotitoApp:
             try:
                 with open(archivo, 'r') as file:
                     contenido = file.read()
+                    self.text_area.delete(1.0, tk.END)  # Limpiar el contenido actual del TextArea
+                    self.text_area.insert(tk.END, contenido)  # Insertar el contenido del archivo en el TextArea
                     analizador_lexico = AnalizadorLexico()  # Instanciar el analizador léxico
                     if analizador_lexico.verificar_estructura(contenido):
                         # Procesar el contenido del archivo si la estructura es válida
@@ -186,16 +268,32 @@ class TotitoApp:
                         for linea in lineas:
                             if linea.strip().startswith("set_print"):
                                 partes = re.findall(r'\w+', linea)  # Dividir la línea en partes
-                                figura = partes[0].split("_")[-1].lower()  # Obtener la figura de la línea
+                                figura_raw = partes[0].split("_")[-1]  # Obtener la figura de la línea
+                                figura = None
+                                if "triangulo" in figura_raw.lower():  # Verificar si la palabra "triangulo" está en el nombre de la figura
+                                    figura = "Triangulo"
+                                elif "estrella" in figura_raw.lower():  # Verificar si la palabra "estrella" está en el nombre de la figura
+                                    figura = "Estrella"
+                                elif figura_raw.upper() in ["X", "O"]:  # Verificar si la figura es "X" o "O"
+                                    figura = figura_raw.upper()
+                                else:
+                                    messagebox.showerror("Error", f"Figura '{figura_raw}' no reconocida.")
+                                    continue
                                 coordenadas = re.findall(r'\d+', linea)  # Extraer las coordenadas de la línea
                                 if len(coordenadas) != 2:  # Verifica que haya dos elementos en coordenadas
                                     messagebox.showerror("Error", "Las coordenadas son inválidas.")
                                     continue
                                 color = partes[-1]  # Obtener el color de la línea
+                                print("Figura obtenida del archivo:", figura)  # Agregar esta línea para imprimir la figura
                                 fila, columna = map(int, coordenadas)
                                 self.dibujar_figura(figura, fila, columna, color)
-                    else:
-                        messagebox.showerror("Error", "La estructura del archivo no es válida.")
+
+
+            except FileNotFoundError:
+                messagebox.showerror("Error", "El archivo no se encontró.")
+
+
+
             except FileNotFoundError:
                 messagebox.showerror("Error", "El archivo no se encontró.")
 
