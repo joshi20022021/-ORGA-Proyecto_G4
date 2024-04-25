@@ -105,7 +105,7 @@ class TotitoApp:
         entry_columna = tk.Entry(ventana)
         entry_columna.grid(row=1, column=1, padx=5, pady=5)
 
-        colores = ["cyan", "magenta", "yellow", "black"]
+        colores = ["cyan", "magenta", "amarillo", "negro"]
         color_variable = tk.StringVar(ventana)
         color_variable.set(colores[0])
         dropdown_color = tk.OptionMenu(ventana, color_variable, *colores)
@@ -124,21 +124,34 @@ class TotitoApp:
             # Calcular coordenadas en píxeles
             x = columna * 100 - 50
             y = fila * 100 - 50
+            figura = figura.upper()  # Convertir la figura a mayúsculas
+            
+            # Mapear "negro" a "black"
+            if color == "negro":
+                color = "black"
+            # Mapear "amarillo" a "yellow"
+            elif color == "amarillo":
+                color = "yellow"
+            
             if figura == "X":
                 self.canvas.create_line(x-40, y-40, x+40, y+40, fill=color, width=2)
                 self.canvas.create_line(x-40, y+40, x+40, y-40, fill=color, width=2)
             elif figura == "O":
                 self.canvas.create_oval(x-40, y-40, x+40, y+40, outline=color, width=2)
-            elif figura == "Estrella":
+            elif figura == "ESTRELLA":
                 puntos = [x, y-50, x-20, y-20, x-50, y, x-20, y+20, x, y+50, x+20, y+20, x+50, y, x+20, y-20]
                 self.canvas.create_polygon(puntos, fill=color, outline=color)
-            elif figura == "Triangulo":
+            elif figura == "TRIANGULO":
                 puntos = [x, y-50, x-50, y+50, x+50, y+50]
                 self.canvas.create_polygon(puntos, fill=color, outline=color)
+            
             # Actualizar la matriz del tablero
             self.tablero[fila-1][columna-1] = figura
         except ValueError:
             messagebox.showerror("Error", "Ingrese valores numéricos para fila y columna.")
+
+
+
 
 
     def colocar_figura(self, figura, fila, columna, color):
