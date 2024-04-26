@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import ply.lex as lex
+from analyzer.analyzer import analyze_file
 import re
 import os
 
@@ -309,58 +309,17 @@ class TotitoApp:
                     self.text_area.delete(
                         1.0, tk.END
                     )  # Limpiar el contenido actual del TextArea
-                    self.text_area.insert(
-                        tk.END, contenido
-                    )  # Insertar el contenido del archivo en el TextArea
-                    analizador_lexico = (
-                        AnalizadorLexico()
-                    )  # Instanciar el analizador léxico
-                    if analizador_lexico.verificar_estructura(contenido):
-                        # Procesar el contenido del archivo si la estructura es válida
-                        lineas = contenido.split("\n")
-                        for linea in lineas:
-                            if linea.strip().startswith("set_print"):
-                                partes = re.findall(
-                                    r"\w+", linea
-                                )  # Dividir la línea en partes
-                                figura_raw = partes[0].split("_")[
-                                    -1
-                                ]  # Obtener la figura de la línea
-                                figura = None
-                                if (
-                                    "triangulo" in figura_raw.lower()
-                                ):  # Verificar si la palabra "triangulo" está en el nombre de la figura
-                                    figura = "Triangulo"
-                                elif (
-                                    "estrella" in figura_raw.lower()
-                                ):  # Verificar si la palabra "estrella" está en el nombre de la figura
-                                    figura = "Estrella"
-                                elif figura_raw.upper() in [
-                                    "X",
-                                    "O",
-                                ]:  # Verificar si la figura es "X" o "O"
-                                    figura = figura_raw.upper()
-                                else:
-                                    messagebox.showerror(
-                                        "Error", f"Figura '{figura_raw}' no reconocida."
-                                    )
-                                    continue
-                                coordenadas = re.findall(
-                                    r"\d+", linea
-                                )  # Extraer las coordenadas de la línea
-                                if (
-                                    len(coordenadas) != 2
-                                ):  # Verifica que haya dos elementos en coordenadas
-                                    messagebox.showerror(
-                                        "Error", "Las coordenadas son inválidas."
-                                    )
-                                    continue
-                                color = partes[-1]  # Obtener el color de la línea
-                                print(
-                                    "Figura obtenida del archivo:", figura
-                                )  # Agregar esta línea para imprimir la figura
-                                fila, columna = map(int, coordenadas)
-                                self.dibujar_figura(figura, fila, columna, color)
+                    self.text_area.insert(tk.END, contenido)
+
+                prints = analyze_file(archivo)
+                for print in prints:
+                    for instruction in print.instructions:
+                        self.dibujar_figura(
+                            instruction.shape,
+                            instruction.row,
+                            instruction.column,
+                            instruction.color,
+                        )
 
             except FileNotFoundError:
                 messagebox.showerror("Error", "El archivo no se encontró.")
