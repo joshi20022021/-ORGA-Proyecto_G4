@@ -23,4 +23,8 @@ def analyze_file(file_path: str) -> List[PrintJob]:
     with open(file_path, "r") as file:
         input_text = file.read()
         data = parser.parse(input_text)
+
+    for d in data:
+        d.order_instructions()
+
     return data
