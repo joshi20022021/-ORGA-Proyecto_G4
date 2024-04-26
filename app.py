@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import ply.lex as lex
 import re
+import os
+
 
 class AnalizadorLexico:
     def __init__(self):
@@ -89,6 +91,10 @@ class TotitoApp:
         self.text_frame.pack(pady=10)
         self.text_area = tk.Text(self.text_frame, width=30, height=10)
         self.text_area.pack()
+
+        # Botón para enviar el texto y actualizar el tablero
+        btn_enviar = tk.Button(root, text="Enviar texto", padx=10, pady=5, bg="#007bff", fg="white", activebackground="#0056b3")
+        btn_enviar.pack(pady=10)
 
         # Crear la barra de menú
         self.crear_menu()
@@ -292,12 +298,26 @@ class TotitoApp:
             except FileNotFoundError:
                 messagebox.showerror("Error", "El archivo no se encontró.")
 
+    def cargar_desde_texto(self):
+        # Obtener el contenido del TextArea
+        contenido = self.text_area.get("1.0", tk.END)
 
+        # Crear un archivo .olc y escribir el contenido
+        try:
+            with open("archivo_temporal.olc", "w") as file:
+                file.write(contenido)
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo crear el archivo temporal: {e}")
+            return
 
-            except FileNotFoundError:
-                messagebox.showerror("Error", "El archivo no se encontró.")
+        # Abrir el archivo automáticamente
+        try:
+            os.startfile("archivo_temporal.olc")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo abrir el archivo temporal: {e}")
 
-
+        # Cargar el contenido del archivo en el tablero
+        self.cargar_desde_archivo()
 
 if __name__ == "__main__":
     root = tk.Tk()
