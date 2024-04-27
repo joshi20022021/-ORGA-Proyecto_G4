@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox
 from analyzer.analyzer import analyze_file
 import re
 import os
+from ComSerial import serial
 
 
 class TotitoApp:
@@ -299,6 +300,7 @@ class TotitoApp:
 
         # Actualiza la matriz del tablero
         self.tablero[fila - 1][columna - 1] = figura
+        
 
     def cargar_desde_archivo(self):
         archivo = filedialog.askopenfilename(filetypes=[("Archivos .olc", "*.olc")])
@@ -311,7 +313,10 @@ class TotitoApp:
                     )  # Limpiar el contenido actual del TextArea
                     self.text_area.insert(tk.END, contenido)
 
-                prints = analyze_file(archivo)
+                prints = analyze_file(archivo) 
+                serial(prints)
+                messagebox.showerror("Error", prints)
+                
                 for print in prints:
                     for instruction in print.instructions:
                         self.dibujar_figura(
